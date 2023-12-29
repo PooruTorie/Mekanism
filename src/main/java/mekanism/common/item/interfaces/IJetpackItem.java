@@ -1,7 +1,5 @@
 package mekanism.common.item.interfaces;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 import mekanism.api.IIncrementalEnum;
 import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.api.math.MathUtils;
@@ -11,6 +9,7 @@ import mekanism.api.text.ILangEntry;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
+import mekanism.common.config.value.CachedFloatValue;
 import mekanism.common.integration.curios.CuriosIntegration;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
@@ -23,6 +22,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
+
 public interface IJetpackItem {
 
     boolean canUseJetpack(ItemStack stack);
@@ -30,6 +32,8 @@ public interface IJetpackItem {
     JetpackMode getJetpackMode(ItemStack stack);
 
     void useJetpackFuel(ItemStack stack);
+
+    CachedFloatValue getMaxSpeed();
 
     @NothingNullByDefault
     enum JetpackMode implements IIncrementalEnum<JetpackMode>, IHasTextComponent {
@@ -108,17 +112,23 @@ public interface IJetpackItem {
     /**
      * @return If fall distance should get reset or not
      */
-    static boolean handleJetpackMotion(Player player, JetpackMode mode, BooleanSupplier ascendingSupplier) {
+    default boolean handleJetpackMotion(Player player, JetpackMode mode, BooleanSupplier ascendingSupplier) {
         Vec3 motion = player.getDeltaMovement();
         if (mode == JetpackMode.NORMAL) {
+            Vec3 forward = player.getLookAngle();
             if (player.isFallFlying()) {
-                Vec3 forward = player.getLookAngle();
                 Vec3 delta = forward.multiply(forward.scale(0.15))
                       .add(forward.scale(1.5).subtract(motion).scale(0.5));
                 player.setDeltaMovement(motion.add(delta));
                 return false;
             } else {
-                player.setDeltaMovement(motion.x(), Math.min(motion.y() + 0.15D, 0.5D), motion.z());
+                float maxSpeed = this.getMaxSpeed().getAsFloat();
+                forward = forward.scale(0.15);
+                player.setDeltaMovement(
+                        Math.max(Math.min(motion.x() + forward.x(), maxSpeed), -maxSpeed),
+                        Math.min(motion.y() + 0.15D, 0.5D),
+                        Math.max(Math.min(motion.z() + forward.z(), maxSpeed), -maxSpeed)
+                );
             }
         } else if (mode == JetpackMode.HOVER) {
             boolean ascending = ascendingSupplier.getAsBoolean();

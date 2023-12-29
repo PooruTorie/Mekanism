@@ -15,6 +15,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.config.value.CachedFloatValue;
 import mekanism.common.config.value.CachedLongValue;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
@@ -85,6 +86,11 @@ public class ItemJetpack extends ItemGasArmor implements IItemHUDProvider, IMode
     @Override
     public void useJetpackFuel(ItemStack stack) {
         useGas(stack, 1);
+    }
+
+    @Override
+    public CachedFloatValue getMaxSpeed() {
+        return MekanismConfig.gear.jetpackMaxSpeed;
     }
 
     public void setMode(ItemStack stack, JetpackMode mode) {

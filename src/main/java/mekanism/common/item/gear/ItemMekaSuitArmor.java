@@ -39,6 +39,7 @@ import mekanism.common.capabilities.fluid.item.RateLimitMultiTankFluidHandler.Fl
 import mekanism.common.capabilities.laser.item.LaserDissipationHandler;
 import mekanism.common.capabilities.radiation.item.RadiationShieldingHandler;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.config.value.CachedFloatValue;
 import mekanism.common.config.value.CachedIntValue;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.Module;
@@ -389,6 +390,11 @@ public class ItemMekaSuitArmor extends ItemSpecialArmor implements IModuleContai
     @Override
     public void useJetpackFuel(ItemStack stack) {
         useGas(stack, MekanismGases.HYDROGEN.get(), 1);
+    }
+
+    @Override
+    public CachedFloatValue getMaxSpeed() {
+        return MekanismConfig.gear.mekaSuitJetpackMaxSpeed;
     }
 
     private FloatingLong getMaxEnergy(ItemStack stack) {

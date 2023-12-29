@@ -77,6 +77,7 @@ public class GearConfig extends BaseMekanismConfig {
     public final CachedFloatValue armoredFreeRunnerToughness;
     public final CachedFloatValue armoredFreeRunnerKnockbackResistance;
     //Jetpack
+    public final CachedFloatValue jetpackMaxSpeed;
     public final CachedLongValue jetpackMaxGas;
     public final CachedLongValue jetpackFillRate;
     //Armored Jetpack
@@ -137,6 +138,7 @@ public class GearConfig extends BaseMekanismConfig {
     public final CachedBooleanValue mekaSuitGravitationalVibrations;
     public final CachedIntValue mekaSuitNutritionalMaxStorage;
     public final CachedIntValue mekaSuitNutritionalTransferRate;
+    public final CachedFloatValue mekaSuitJetpackMaxSpeed;
     public final CachedLongValue mekaSuitJetpackMaxStorage;
     public final CachedLongValue mekaSuitJetpackTransferRate;
     public final CachedIntValue mekaSuitHelmetArmor;
@@ -236,6 +238,8 @@ public class GearConfig extends BaseMekanismConfig {
         builder.pop(2);
 
         builder.comment("Jetpack Settings").push(JETPACK_CATEGORY);
+        jetpackMaxSpeed = CachedFloatValue.wrap(this, builder.comment("Jetpack max Speed in b/s.")
+              .defineInRange("maxSpeed", 0.5f, Float.MIN_NORMAL, Float.MAX_VALUE));
         jetpackMaxGas = CachedLongValue.wrap(this, builder.comment("Jetpack Gas Tank capacity in mB.")
               .defineInRange("maxGas", 24_000, 1, Long.MAX_VALUE));
         jetpackFillRate = CachedLongValue.wrap(this, builder.comment("Amount of hydrogen the Jetpack can accept per tick.")
@@ -362,6 +366,8 @@ public class GearConfig extends BaseMekanismConfig {
               .defineInRange("nutritionalMaxStorage", 128_000, 1, Integer.MAX_VALUE));
         mekaSuitNutritionalTransferRate = CachedIntValue.wrap(this, builder.comment("Rate at which Nutritional Paste can be transferred into the nutritional injection unit.")
               .defineInRange("nutritionalTransferRate", 256, 1, Integer.MAX_VALUE));
+        mekaSuitJetpackMaxSpeed = CachedFloatValue.wrap(this, builder.comment("Jetpack unit max Speed in b/s.")
+                .defineInRange("jetpackMaxSpeed", 0.8f, Float.MIN_NORMAL, Float.MAX_VALUE));
         mekaSuitJetpackMaxStorage = CachedLongValue.wrap(this, builder.comment("Maximum amount of Hydrogen storable in the jetpack unit.")
               .defineInRange("jetpackMaxStorage", 48_000, 1, Long.MAX_VALUE));
         mekaSuitJetpackTransferRate = CachedLongValue.wrap(this, builder.comment("Rate at which Hydrogen can be transferred into the jetpack unit.")
